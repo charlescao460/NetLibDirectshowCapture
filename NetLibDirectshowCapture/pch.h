@@ -8,5 +8,7 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
+#include "dshowcapture.hpp"
+#include "ManagedObjectBase.h"
 
 #endif //PCH_H
