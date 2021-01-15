@@ -313,6 +313,10 @@ namespace NetLibDirectshowCapture
 
         delegate void VideoCapturedEventHandler(System::Object^ source, VideoCapturedEventArgs^ args);
 
+        /// <summary>
+        /// Raised when native has received video bytes. It will send a copy to managed code.
+        /// This event must be assigned before calling Start().
+        /// </summary>
         event VideoCapturedEventHandler^ OnVideoCaptured;
 
         property System::String^ Name
@@ -381,32 +385,112 @@ namespace NetLibDirectshowCapture
         }
     };
 
-    public ref struct AudioConfig : Config
+    ref class AudioConfig;
+
+    public ref class AudioCapturedEventArgs : public System::EventArgs
     {
-        delegate void AudioProc(AudioConfig^ config, System::Array^ data, unsigned long long startTime, unsigned long long stopTime);
+    public:
+        property AudioConfig^ Config;
+        property array<Byte>^ Data;
+        property long long StartTime;
+        property long long StopTime;
 
-        AudioProc^ Callback;
+        AudioCapturedEventArgs(AudioConfig^ config, array<Byte>^ data, long long start, long long stop);
+    };
 
-        /**
-             * Use the audio attached to the video device
-             *
-             * (name/path memeber variables will be ignored)
-             */
-        bool UseVideoDevice = false;
+    typedef void (*TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
 
-        /** Use separate filter for audio */
-        bool UseSeparateAudioFilter = false;
+    public ref class AudioConfig : public IConfig, public ManagedObjectBase<DShow::AudioConfig>
+    {
+    private:
+        delegate void AudioProc(const DShow::AudioConfig& config, unsigned char* data,
+            size_t size, long long startTime, long long stopTime);
 
-        /** Desired sample rate */
-        int SampleRate = 0;
+        void native_audio_handler(const DShow::AudioConfig& config, unsigned char* data,
+            size_t size, long long startTime, long long stopTime);
 
-        /** Desired channels */
-        int Channels = 0;
+    public:
+        AudioConfig();
 
-        /** Desired audio format */
-        AudioFormat Format = AudioFormat::Any;
+        /// <summary>
+        /// Raised when native has received audio bytes. It will send a copy to managed code.
+        /// This event must be assigned before calling Start().
+        /// </summary>
+        delegate void AudioCapturedEventHandler(System::Object^ source, AudioCapturedEventArgs^ args);
 
-        /** Audio playback mode */
-        AudioMode Mode = AudioMode::Capture;
+        event AudioCapturedEventHandler^ OnAudioCaptured;
+
+        property System::String^ Name
+        {
+            virtual System::String^ get();
+            virtual void set(System::String^ value);
+        }
+
+        property System::String^ Path
+        {
+            virtual System::String^ get();
+            virtual void set(System::String^ value);
+        }
+
+        virtual property bool UseDefaultConfig
+        {
+            virtual bool get();
+            virtual void set(bool value);
+        }
+
+        /// <summary>
+        /// Use the audio attached to the video device
+        /// (name/path memeber variables will be ignored)
+        /// </summary>
+        property bool UseVideoDevice
+        {
+            bool get();
+            void set(bool value);
+        }
+
+        /// <summary>
+        /// Use separate filter for audio 
+        /// </summary>
+        property bool UseSeparateAudioFilter
+        {
+            bool get();
+            void set(bool value);
+        }
+
+        /// <summary>
+        /// Desired sample rate 
+        /// </summary>
+        property int SampleRate
+        {
+            int get();
+            void set(int value);
+        }
+
+        /// <summary>
+        /// Desired channels 
+        /// </summary>
+        property int Channels
+        {
+            int get();
+            void set(int value);
+        }
+
+        /// <summary>
+        /// Desired audio format
+        /// </summary>
+        property AudioFormat Format
+        {
+            AudioFormat get();
+            void set(AudioFormat value);
+        }
+
+        /// <summary>
+        /// Audio playback mode
+        /// </summary>
+        property AudioMode Mode
+        {
+            AudioMode get();
+            void set(AudioMode value);
+        }
     };
 }

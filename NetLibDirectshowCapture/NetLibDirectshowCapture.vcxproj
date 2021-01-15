@@ -142,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="AudioConfig.cpp" />
     <ClCompile Include="AudioDevice.cpp" />
     <ClCompile Include="AudioInfo.cpp" />
     <ClCompile Include="Config.cpp" />
