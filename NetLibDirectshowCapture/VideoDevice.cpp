@@ -3,6 +3,14 @@
 
 namespace NetLibDirectshowCapture
 {
+    VideoDevice::VideoDevice()
+    {
+    }
+
+    VideoDevice::VideoDevice(const DShow::VideoDevice& other) :ManagedObjectBase<DShow::VideoDevice>(other)
+    {
+    }
+
     System::String^ VideoDevice::Name::get()
     {
         return gcnew System::String(_native->name.c_str());

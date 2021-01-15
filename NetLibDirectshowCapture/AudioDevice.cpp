@@ -7,6 +7,14 @@ namespace NetLibDirectshowCapture
     {
     }
 
+    AudioDevice::AudioDevice()
+    {
+    }
+
+    AudioDevice::AudioDevice(const DShow::AudioDevice& other) : ManagedObjectBase<DShow::AudioDevice>(other)
+    {
+    }
+
     System::String^ AudioDevice::Name::get()
     {
         return gcnew System::String(_native->name.c_str());

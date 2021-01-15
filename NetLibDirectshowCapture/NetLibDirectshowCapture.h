@@ -12,7 +12,7 @@ namespace NetLibDirectshowCapture
         True,
     };
 
-    enum class DialogType
+    public enum class DialogType
     {
         ConfigVideo,
         ConfigAudio,
@@ -185,6 +185,9 @@ namespace NetLibDirectshowCapture
     public ref class DeviceId : public IDeviceId, public ManagedObjectBase<DShow::DeviceId>
     {
     public:
+        DeviceId();
+        DeviceId(const DShow::DeviceId& other);
+
         property System::String^ Name
         {
             virtual System::String^ get();
@@ -200,6 +203,9 @@ namespace NetLibDirectshowCapture
     public ref class VideoDevice : public IDeviceId, ManagedObjectBase<DShow::VideoDevice>
     {
     public:
+        VideoDevice();
+        VideoDevice(const DShow::VideoDevice& other);
+
         property System::String^ Name
         {
             virtual System::String^ get();
@@ -233,6 +239,9 @@ namespace NetLibDirectshowCapture
     public ref struct AudioDevice : public IDeviceId, ManagedObjectBase<DShow::AudioDevice>
     {
     public:
+        AudioDevice();
+        AudioDevice(const DShow::AudioDevice& other);
+
         property System::String^ Name
         {
             virtual System::String^ get();
@@ -493,4 +502,102 @@ namespace NetLibDirectshowCapture
             void set(AudioMode value);
         }
     };
+
+    public ref class Device : public ManagedObjectBase<DShow::Device>
+    {
+    private:
+        VideoConfig^ _videoConfiguration;
+        AudioConfig^ _audioConfiguration;
+    protected:
+        bool _isRunning;
+    public:
+        Device(bool initGraph);
+
+        bool Valid();
+
+        bool ResetGraph();
+
+        void ShutdownGraph();
+
+        property bool Running
+        {
+            bool get();
+        };
+
+        /// <summary>
+        /// Configuration of video capture devices. Note that its On-capture event must have a handler.
+        /// And after set, it should not be modified without calling setter again.
+        /// Setter will throw if trying to set it when device is running.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">If set during running</exception>
+        property VideoConfig^ VideoConfiguration
+        {
+            VideoConfig^ get();
+            void set(VideoConfig^ value);
+        }
+
+        /// <summary>
+        /// Configuration of video capture devices. Note that its On-capture event must have a handler.
+        /// And after set, it should not be modified without calling setter again.
+        /// Setter will throw if trying to set it when device is running.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">If set during running</exception>
+        property AudioConfig^ AudioConfiguration
+        {
+            AudioConfig^ get();
+            void set(AudioConfig^ value);
+        }
+
+        /// <summary>
+        /// Connects all the configured filters together.
+        /// Call SetVideoConfig and/or SetAudioConfig before using.
+        /// </summary>
+        /// <returns>If succeed</returns>
+        bool ConnectFilters();
+
+        /// <summary>
+        /// Start capturing. Before calling this, a valid video config and/or video config must be set.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">If no valid video or audio config is set.</exception>
+        /// <exception cref="System.UnauthorizedAccessException">If there is an error when opening the devices.</exception>
+        /// <exception cref="System.IO.IOException">If the device is in use.</exception>
+        void Start();
+
+        /// <summary>
+        /// Stop capturing.
+        /// </summary>
+        void Stop();
+
+        property DeviceId^ VideoDeviceId
+        {
+            DeviceId^ get();
+        }
+
+        property DeviceId^ AudioDeviceId
+        {
+            DeviceId^ get();
+        }
+
+        /// <summary>
+        /// Opens a DirectShow dialog associated with this device
+        /// </summary>
+        /// <param name="hwnd">Window handle</param>
+        /// <param name="type">The dialog type</param>
+        void OpenDialog(IntPtr hwnd, DialogType type);
+
+        /// <summary>
+        /// Enum all video devices on this computer. 
+        /// </summary>
+        /// <exception cref="System.UnauthorizedAccessException">When there is an error enumerating device.</exception>
+        /// <returns>All video devices on this computer</returns>
+        static System::Collections::Generic::List<VideoDevice^>^ EnumVideoDevices();
+
+        /// <summary>
+        /// Enum all audio devices on this computer. 
+        /// </summary>
+        /// <exception cref="System.UnauthorizedAccessException">When there is an error enumerating device.</exception>
+        /// <returns>All audio devices on this computer</returns>
+        static System::Collections::Generic::List<AudioDevice^>^ EnumAudioDevices();
+    };
+
 }

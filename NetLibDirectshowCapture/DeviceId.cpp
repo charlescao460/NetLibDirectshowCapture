@@ -3,6 +3,14 @@
 
 namespace NetLibDirectshowCapture
 {
+    DeviceId::DeviceId()
+    {
+    }
+
+    DeviceId::DeviceId(const DShow::DeviceId& other) : ManagedObjectBase<DShow::DeviceId>(other)
+    {
+    }
+
     System::String^ DeviceId::Name::get()
     {
         return gcnew System::String(_native->name.c_str());
