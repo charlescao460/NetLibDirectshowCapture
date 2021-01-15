@@ -3,6 +3,10 @@
 
 namespace NetLibDirectshowCapture
 {
+    VideoInfo::VideoInfo(const DShow::VideoInfo& other) : ManagedObjectBase<DShow::VideoInfo>(other)
+    {
+    }
+
     int VideoInfo::MinCx::get()
     {
         return _native->minCX;

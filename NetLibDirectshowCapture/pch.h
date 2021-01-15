@@ -8,6 +8,9 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
+#include <msclr\marshal.h>
+#include <msclr\marshal_cppstd.h>
+
 #include "dshowcapture.hpp"
 #include "ManagedObjectBase.h"
 

@@ -5,13 +5,16 @@ namespace NetLibDirectshowCapture {
     template<class T>
     public ref class ManagedObjectBase
     {
-    protected:
+    private protected:
         T* _native;
 
-    public:
         template<class ... Types>
         ManagedObjectBase(Types ... args)
             : _native(new T(args ...))
+        {
+        }
+
+        ManagedObjectBase(const T& other) : _native(new T(other))
         {
         }
 
@@ -20,17 +23,19 @@ namespace NetLibDirectshowCapture {
             this->!ManagedObjectBase();
         }
 
+    internal:
+        T* GetInstance()
+        {
+            return _native;
+        }
+
+    public:
         !ManagedObjectBase()
         {
             if (_native != nullptr)
             {
                 delete _native;
             }
-        }
-
-        T* GetInstance()
-        {
-            return _native;
         }
     };
 }
