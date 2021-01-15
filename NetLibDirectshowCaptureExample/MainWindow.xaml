@@ -8,11 +8,13 @@
         Title="MainWindow" Height="450" Width="800">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Name="VideoDeviceMenu" Header="Video">
+            <MenuItem Name="ConnectMenu" Header="Connect">
                 <Separator />
-                <MenuItem Header="Refresh"></MenuItem>
+                <MenuItem Header="Refresh" Click="OnRefreshClick"></MenuItem>
                 <MenuItem Header="Disconnect"></MenuItem>
             </MenuItem>
+            <MenuItem Name="DialogMenu" Header="DShow Dialog"></MenuItem>
         </Menu>
+
     </DockPanel>
 </Window>

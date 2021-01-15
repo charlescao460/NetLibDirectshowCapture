@@ -236,7 +236,7 @@ namespace NetLibDirectshowCapture
         }
     };
 
-    public ref struct AudioDevice : public IDeviceId, ManagedObjectBase<DShow::AudioDevice>
+    public ref class AudioDevice : public IDeviceId, ManagedObjectBase<DShow::AudioDevice>
     {
     public:
         AudioDevice();

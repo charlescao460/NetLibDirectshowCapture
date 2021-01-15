@@ -21,6 +21,8 @@ namespace NetLibDirectshowCaptureExample
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<VideoDevice> _videoDevices;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,9 +31,48 @@ namespace NetLibDirectshowCaptureExample
 
         private void ListVideoDevices()
         {
-            var devices = Device.EnumVideoDevices();
+            // Remove old menu items
+            int previousNumberOfDevices = _videoDevices?.Count ?? 0;
+            for (int i = 0; i < previousNumberOfDevices; ++i)
+            {
+                ConnectMenu.Items.RemoveAt(0);
+            }
+            // Enumerate devices and add new menu items
+            _videoDevices = Device.EnumVideoDevices();
+            _videoDevices.ForEach(d =>
+            {
+                MenuItem toAdd = new MenuItem()
+                {
+                    Header = d.Name,
+                };
+                ConnectMenu.Items.Insert(0, toAdd);
+            });
+            // Update items in dialog menu
+            UpdateDirectshowDialogMenu();
             return;
         }
 
+        private void UpdateDirectshowDialogMenu()
+        {
+            DialogMenu.Items.Clear();
+            _videoDevices.ForEach(d =>
+            {
+                MenuItem toAdd = new MenuItem()
+                {
+                    Header = d.Name,
+                };
+                DialogMenu.Items.Insert(0, toAdd);
+            });
+        }
+
+        private void OnDialogMenuItemClick(object sender, RoutedEventArgs e, VideoDevice device)
+        {
+            
+        }
+
+        private void OnRefreshClick(object sender, RoutedEventArgs e)
+        {
+            ListVideoDevices();
+        }
     }
 }
