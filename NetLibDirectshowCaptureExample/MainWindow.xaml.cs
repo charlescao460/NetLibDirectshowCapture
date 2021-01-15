@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using NetLibDirectshowCapture;
 
 namespace NetLibDirectshowCaptureExample
 {
@@ -23,6 +24,14 @@ namespace NetLibDirectshowCaptureExample
         public MainWindow()
         {
             InitializeComponent();
+            ListVideoDevices();
         }
+
+        private void ListVideoDevices()
+        {
+            var devices = Device.EnumVideoDevices();
+            return;
+        }
+
     }
 }

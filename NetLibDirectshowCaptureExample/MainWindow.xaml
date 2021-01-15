@@ -6,7 +6,13 @@
         xmlns:local="clr-namespace:NetLibDirectshowCaptureExample"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Name="VideoDeviceMenu" Header="Video">
+                <Separator />
+                <MenuItem Header="Refresh"></MenuItem>
+                <MenuItem Header="Disconnect"></MenuItem>
+            </MenuItem>
+        </Menu>
+    </DockPanel>
 </Window>
