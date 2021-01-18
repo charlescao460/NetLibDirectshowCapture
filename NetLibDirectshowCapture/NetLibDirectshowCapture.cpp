@@ -41,6 +41,10 @@ namespace NetLibDirectshowCapture
             throw gcnew System::InvalidOperationException("Cannot change config when capture is running.");
         }
         _videoConfiguration = value;
+        if (!_native->SetVideoConfig(_videoConfiguration->GetInstance()))
+        {
+            throw gcnew System::InvalidOperationException("Cannot set videoConfig.");
+        }
     }
 
     AudioConfig^ Device::AudioConfiguration::get()
@@ -55,6 +59,10 @@ namespace NetLibDirectshowCapture
             throw gcnew System::InvalidOperationException("Cannot change config when capture is running.");
         }
         _audioConfiguration = value;
+        if (!_native->SetAudioConfig(_audioConfiguration->GetInstance()))
+        {
+            throw gcnew System::InvalidOperationException("Cannot set audioConfig.");
+        }
     }
 
     bool Device::ConnectFilters()
@@ -68,7 +76,7 @@ namespace NetLibDirectshowCapture
         {
             return;
         }
-        if (_audioConfiguration == nullptr || _videoConfiguration == nullptr)
+        if (_audioConfiguration == nullptr && _videoConfiguration == nullptr)
         {
             throw gcnew System::InvalidOperationException("Cannot start without any configurations set.");
         }
@@ -78,28 +86,36 @@ namespace NetLibDirectshowCapture
         case DShow::Result::Error:
             throw gcnew System::UnauthorizedAccessException("Error when opening capture device.");
         case DShow::Result::InUse:
-            throw gcnew  System::IO::IOException("Device is in use.");
+            throw gcnew System::IO::IOException("Device is in use.");
         default:
             break;
         }
+        _isRunning = true;
     }
 
     void Device::Stop()
     {
         _native->Stop();
+        _isRunning = false;
     }
 
     DeviceId^ Device::VideoDeviceId::get()
     {
         DShow::DeviceId id;
-        _native->GetVideoDeviceId(id);
+        if (!_native->GetVideoDeviceId(id))
+        {
+            return nullptr;
+        }
         return gcnew DeviceId(id);
     }
 
     DeviceId^ Device::AudioDeviceId::get()
     {
         DShow::DeviceId id;
-        _native->GetAudioDeviceId(id);
+        if (!_native->GetAudioDeviceId(id))
+        {
+            return nullptr;
+        }
         return gcnew DeviceId(id);
     }
 
@@ -139,4 +155,30 @@ namespace NetLibDirectshowCapture
         }
         return ret;
     }
+
+    void DSLogger::native_logger(DShow::LogType type, const wchar_t* msg, void* param)
+    {
+        if (_callBack == nullptr)
+        {
+            return;
+        }
+        _callBack(static_cast<LogType>(type), gcnew System::String(msg));
+    }
+
+    void DSLogger::CallBack::set(LogCallBackDelegate^ value)
+    {
+        _callBack = value;
+        if (value == nullptr)
+        {
+            DShow::SetLogCallback(nullptr, nullptr);
+        }
+        else
+        {
+            _nativeCallBack = gcnew DSNativeLoggerCallBackDelegate(&DSLogger::native_logger);
+            IntPtr managedPointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(_nativeCallBack);
+            DShow::LogCallback nativePointer = static_cast<DShow::LogCallback>(managedPointer.ToPointer());
+            DShow::SetLogCallback(nativePointer, nullptr);
+        }
+    }
+
 }

@@ -15,8 +15,8 @@ namespace NetLibDirectshowCapture
 
     VideoConfig::VideoConfig()
     {
-        VideoProc^ del = gcnew VideoProc(this, &NetLibDirectshowCapture::VideoConfig::native_video_handler);
-        IntPtr managedPointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(del);
+        _videoProc = gcnew VideoProc(this, &NetLibDirectshowCapture::VideoConfig::native_video_handler);
+        IntPtr managedPointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(_videoProc);
         TypePointerNativeVideoProc nativePointer = static_cast<TypePointerNativeVideoProc>(managedPointer.ToPointer());
         _native->callback = nativePointer;
     }

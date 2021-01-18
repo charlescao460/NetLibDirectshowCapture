@@ -13,8 +13,8 @@ namespace NetLibDirectshowCapture
 
     NetLibDirectshowCapture::AudioConfig::AudioConfig()
     {
-        AudioProc^ del = gcnew AudioProc(this, &NetLibDirectshowCapture::AudioConfig::native_audio_handler);
-        IntPtr managedPointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(del);
+        _audioProc = gcnew AudioProc(this, &NetLibDirectshowCapture::AudioConfig::native_audio_handler);
+        IntPtr managedPointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(_audioProc);
         TypePointerNativeAudioProc nativePointer = static_cast<TypePointerNativeAudioProc>(managedPointer.ToPointer());
         _native->callback = nativePointer;
     }

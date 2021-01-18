@@ -305,7 +305,7 @@ namespace NetLibDirectshowCapture
         VideoCapturedEventArgs(VideoConfig^ config, array<Byte>^ data, long long start, long long stop, long rotation);
     };
 
-    typedef void (*TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
+    typedef void (__stdcall *TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
 
     public ref class VideoConfig : public IConfig, public ManagedObjectBase<DShow::VideoConfig>
     {
@@ -313,6 +313,7 @@ namespace NetLibDirectshowCapture
         delegate void VideoProc(const DShow::VideoConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime,
             long rotation);
+        VideoProc^ _videoProc;
         void native_video_handler(const DShow::VideoConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime,
             long rotation);
@@ -407,13 +408,14 @@ namespace NetLibDirectshowCapture
         AudioCapturedEventArgs(AudioConfig^ config, array<Byte>^ data, long long start, long long stop);
     };
 
-    typedef void (*TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
+    typedef void (__stdcall *TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
 
     public ref class AudioConfig : public IConfig, public ManagedObjectBase<DShow::AudioConfig>
     {
     private:
         delegate void AudioProc(const DShow::AudioConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime);
+        AudioProc^ _audioProc;
 
         void native_audio_handler(const DShow::AudioConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime);
@@ -600,4 +602,30 @@ namespace NetLibDirectshowCapture
         static System::Collections::Generic::List<AudioDevice^>^ EnumAudioDevices();
     };
 
+    public enum class LogType
+    {
+        Error,
+        Warning,
+        Info,
+        Debug,
+    };
+
+    delegate void DSNativeLoggerCallBackDelegate(DShow::LogType type, const wchar_t* msg, void* param);
+    public delegate void LogCallBackDelegate(LogType type, System::String^ msg);
+
+    /// <summary>
+    /// Static CLR class for configuring logger
+    /// </summary>
+    public ref class DSLogger abstract sealed
+    {
+    private:
+        static DSNativeLoggerCallBackDelegate^ _nativeCallBack;
+        static void native_logger(DShow::LogType type, const wchar_t* msg, void* param);
+        static LogCallBackDelegate^ _callBack;
+    public:
+        static property LogCallBackDelegate^ CallBack
+        {
+            void set(LogCallBackDelegate^ value);
+        };
+    };
 }
