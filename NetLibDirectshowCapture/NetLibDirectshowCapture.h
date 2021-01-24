@@ -291,21 +291,27 @@ namespace NetLibDirectshowCapture
         }
     };
 
+    ref class Device;
     ref class VideoConfig;
 
     public ref class VideoCapturedEventArgs : public System::EventArgs
     {
     public:
         property VideoConfig^ Config;
-        property Span<Byte>^ Data;
+        /// <summary>
+        /// Array of managed buffer. Note that this array is not the exact size of frame buffer.
+        /// Do not reference this array after exiting event handler.
+        /// </summary>
+        property array<Byte>^ Array;
+        property int ArrayLength;
         property long long StartTime;
         property long long StopTime;
         property long Rotation;
 
-        VideoCapturedEventArgs(VideoConfig^ config, Span<Byte>^ data, long long start, long long stop, long rotation);
+        VideoCapturedEventArgs(VideoConfig^ config, array<Byte>^ arr, int arrSize, long long start, long long stop, long rotation);
     };
 
-    typedef void (__stdcall *TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
+    typedef void(__stdcall* TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
 
     public ref class VideoConfig : public IConfig, public ManagedObjectBase<DShow::VideoConfig>
     {
@@ -317,6 +323,8 @@ namespace NetLibDirectshowCapture
         void native_video_handler(const DShow::VideoConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime,
             long rotation);
+    internal:
+        Device^ BindedDevice;
     public:
 
         VideoConfig();
@@ -408,7 +416,7 @@ namespace NetLibDirectshowCapture
         AudioCapturedEventArgs(AudioConfig^ config, array<Byte>^ data, long long start, long long stop);
     };
 
-    typedef void (__stdcall *TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
+    typedef void(__stdcall* TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
 
     public ref class AudioConfig : public IConfig, public ManagedObjectBase<DShow::AudioConfig>
     {
@@ -510,10 +518,20 @@ namespace NetLibDirectshowCapture
     private:
         VideoConfig^ _videoConfiguration;
         AudioConfig^ _audioConfiguration;
+        int _VideoManagedBufferSize;
+        int _AudioManagedBufferSize;
     protected:
         bool _isRunning;
+    internal:
+        array<Byte>^ VideoManagedBuffer;
+        array<Byte>^ AudioManagedBuffer;
     public:
-        Device(bool initGraph);
+        Device(bool initGraph, int videoBufferSize, int audioBufferSize);
+
+        /// <summary>
+        /// Default constructor with initGraph=false, and 100MiB video buffer, 10MiB audio buffer
+        /// </summary>
+        Device();
 
         bool Valid();
 

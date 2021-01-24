@@ -3,11 +3,16 @@
 
 namespace NetLibDirectshowCapture
 {
-    VideoCapturedEventArgs::VideoCapturedEventArgs(VideoConfig^ config, Span<Byte>^ data, long long start,
-        long long stop, long rotation)
+    VideoCapturedEventArgs::VideoCapturedEventArgs(VideoConfig^ config,
+        array<Byte>^ arr,
+        int arrSize,
+        long long start,
+        long long stop,
+        long rotation)
     {
         Config = config;
-        Data = data;
+        Array = arr;
+        ArrayLength = arrSize;
         StartTime = start;
         StopTime = stop;
         Rotation = rotation;
@@ -24,8 +29,18 @@ namespace NetLibDirectshowCapture
     void NetLibDirectshowCapture::VideoConfig::native_video_handler(const DShow::VideoConfig& config,
         unsigned char* data, size_t size, long long startTime, long long stopTime, long rotation)
     {
-        Span<Byte>^ span = gcnew Span<Byte>(data, static_cast<int>(size));
-        VideoCapturedEventArgs^ args = gcnew VideoCapturedEventArgs(this, span, startTime, stopTime, rotation);
+        *_native = config; // Update native config
+        int iSize = static_cast<int>(size);
+        try
+        {
+            System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), BindedDevice->VideoManagedBuffer, 0, iSize);
+        }
+        catch (System::ArgumentOutOfRangeException^ e)
+        {
+            throw gcnew System::ArgumentOutOfRangeException("Managed buffer is too small. Consider increase it when constructing device.", e);
+        }
+        VideoCapturedEventArgs^ args =
+            gcnew VideoCapturedEventArgs(this, BindedDevice->VideoManagedBuffer, iSize, startTime, stopTime, rotation);
         OnVideoCaptured(this, args);
     }
 
