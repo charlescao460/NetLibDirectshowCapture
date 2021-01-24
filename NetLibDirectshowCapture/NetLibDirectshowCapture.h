@@ -531,7 +531,7 @@ namespace NetLibDirectshowCapture
         /// And after set, it should not be modified without calling setter again.
         /// Setter will throw if trying to set it when device is running.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">If set during running</exception>
+        /// <exception cref="System::InvalidOperationException">If set during running</exception>
         property VideoConfig^ VideoConfiguration
         {
             VideoConfig^ get();
@@ -543,7 +543,7 @@ namespace NetLibDirectshowCapture
         /// And after set, it should not be modified without calling setter again.
         /// Setter will throw if trying to set it when device is running.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">If set during running</exception>
+        /// <exception cref="System::InvalidOperationException">If set during running</exception>
         property AudioConfig^ AudioConfiguration
         {
             AudioConfig^ get();
@@ -560,9 +560,9 @@ namespace NetLibDirectshowCapture
         /// <summary>
         /// Start capturing. Before calling this, a valid video config and/or video config must be set.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">If no valid video or audio config is set.</exception>
-        /// <exception cref="System.UnauthorizedAccessException">If there is an error when opening the devices.</exception>
-        /// <exception cref="System.IO.IOException">If the device is in use.</exception>
+        /// <exception cref="System::InvalidOperationException">If no valid video or audio config is set.</exception>
+        /// <exception cref="System::UnauthorizedAccessException">If there is an error when opening the devices.</exception>
+        /// <exception cref="System::IO::IOException">If the device is in use.</exception>
         void Start();
 
         /// <summary>
@@ -590,14 +590,14 @@ namespace NetLibDirectshowCapture
         /// <summary>
         /// Enum all video devices on this computer. 
         /// </summary>
-        /// <exception cref="System.UnauthorizedAccessException">When there is an error enumerating device.</exception>
+        /// <exception cref="System::UnauthorizedAccessException">When there is an error enumerating device.</exception>
         /// <returns>All video devices on this computer</returns>
         static System::Collections::Generic::List<VideoDevice^>^ EnumVideoDevices();
 
         /// <summary>
         /// Enum all audio devices on this computer. 
         /// </summary>
-        /// <exception cref="System.UnauthorizedAccessException">When there is an error enumerating device.</exception>
+        /// <exception cref="System::UnauthorizedAccessException">When there is an error enumerating device.</exception>
         /// <returns>All audio devices on this computer</returns>
         static System::Collections::Generic::List<AudioDevice^>^ EnumAudioDevices();
     };

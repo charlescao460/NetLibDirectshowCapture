@@ -99,7 +99,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>..\libdshowcapture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <DisableSpecificWarnings>4638</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -116,7 +116,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>..\libdshowcapture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <DisableSpecificWarnings>4638</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -133,7 +133,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>..\libdshowcapture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <DisableSpecificWarnings>4638</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -150,7 +150,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>..\libdshowcapture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <DisableSpecificWarnings>4638</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
