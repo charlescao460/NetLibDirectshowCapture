@@ -3,7 +3,7 @@
 
 namespace NetLibDirectshowCapture
 {
-    VideoCapturedEventArgs::VideoCapturedEventArgs(VideoConfig^ config, array<Byte>^ data, long long start,
+    VideoCapturedEventArgs::VideoCapturedEventArgs(VideoConfig^ config, Span<Byte>^ data, long long start,
         long long stop, long rotation)
     {
         Config = config;
@@ -24,9 +24,8 @@ namespace NetLibDirectshowCapture
     void NetLibDirectshowCapture::VideoConfig::native_video_handler(const DShow::VideoConfig& config,
         unsigned char* data, size_t size, long long startTime, long long stopTime, long rotation)
     {
-        array<Byte>^ copy = gcnew array<Byte>(static_cast<int>(size));
-        System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), copy, 0, static_cast<int>(size));
-        VideoCapturedEventArgs^ args = gcnew VideoCapturedEventArgs(this, copy, startTime, stopTime, rotation);
+        Span<Byte>^ span = gcnew Span<Byte>(data, static_cast<int>(size));
+        VideoCapturedEventArgs^ args = gcnew VideoCapturedEventArgs(this, span, startTime, stopTime, rotation);
         OnVideoCaptured(this, args);
     }
 

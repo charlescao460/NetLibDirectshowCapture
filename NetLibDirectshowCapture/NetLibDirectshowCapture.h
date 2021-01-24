@@ -297,12 +297,12 @@ namespace NetLibDirectshowCapture
     {
     public:
         property VideoConfig^ Config;
-        property array<Byte>^ Data;
+        property Span<Byte>^ Data;
         property long long StartTime;
         property long long StopTime;
         property long Rotation;
 
-        VideoCapturedEventArgs(VideoConfig^ config, array<Byte>^ data, long long start, long long stop, long rotation);
+        VideoCapturedEventArgs(VideoConfig^ config, Span<Byte>^ data, long long start, long long stop, long rotation);
     };
 
     typedef void (__stdcall *TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
