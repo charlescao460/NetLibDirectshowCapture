@@ -16,6 +16,10 @@
             </MenuItem>
             <MenuItem Name="DeviceMenu" Header="Device"></MenuItem>
         </Menu>
-        <Image Source="{Binding DisplayingBitmap}" Stretch="None"/>
+        <Image Source="{Binding DisplayingBitmap}" Stretch="None" RenderTransformOrigin="0.5,0.5">
+            <Image.RenderTransform>
+                <ScaleTransform ScaleY="-1"/>
+            </Image.RenderTransform>
+        </Image>
     </DockPanel>
 </Window>

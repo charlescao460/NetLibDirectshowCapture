@@ -99,8 +99,8 @@ namespace NetLibDirectshowCaptureExample
                 CyFlip = false,
                 FrameInterval = 166666,
                 InternalFormat = VideoFormat.XRGB,
-                Format = VideoFormat.XRGB,
-                TranscodeToBGR24 = true // Important!
+                Format = VideoFormat.RGB24,
+                //TranscodeToBGR24 = true // Important!
             };
             videoConfig.OnVideoCaptured += OnFrame;
             _device = new Device();

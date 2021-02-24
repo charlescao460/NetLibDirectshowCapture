@@ -1,6 +1,19 @@
 #include "pch.h"
 #include "NetLibDirectshowCapture.h"
 
+
+int NetLibDirectshowCapture::ImageTranscoder::TranscodeToBgr24(void* nativeSrc, int nativeLength, array<Byte>^ managedDst, int width, int height, VideoFormat format)
+{
+    switch (format)
+    {
+    case VideoFormat::XRGB:
+        return XrgbToBgr24(nativeSrc, nativeLength, managedDst, width, height);
+    default:
+        throw gcnew System::NotImplementedException("Input format is not supported for tanscoder.");
+    }
+    return -1;
+}
+
 int NetLibDirectshowCapture::ImageTranscoder::XrgbToBgr24(void* nativeSrc, int nativeLength, array<Byte>^ managedDst, int width, int height)
 {
     int stride = 3 * width; // BGR24 is 3-byte per pixel

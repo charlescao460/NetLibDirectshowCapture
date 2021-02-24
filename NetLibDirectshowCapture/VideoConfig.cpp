@@ -35,18 +35,7 @@ namespace NetLibDirectshowCapture
         int iSize = static_cast<int>(size);
         try
         {
-            if (TranscodeToBGR24)
-            {
-                if (config.format != DShow::VideoFormat::XRGB)
-                {
-                    throw gcnew System::NotImplementedException("Currently only XRGB->BGR24 transcoder is implemeneted.");
-                }
-                iSize = ImageTranscoder::XrgbToBgr24(data, iSize, BindedDevice->VideoManagedBuffer, config.cx, config.cy_abs);
-            }
-            else
-            {
-                System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), BindedDevice->VideoManagedBuffer, 0, iSize);
-            }
+            System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), BindedDevice->VideoManagedBuffer, 0, iSize);
         }
         catch (System::ArgumentOutOfRangeException^ e)
         {

@@ -28,6 +28,7 @@ namespace NetLibDirectshowCapture
         /* raw formats */
         ARGB = 100,
         XRGB,
+        RGB24,
 
         /* planar YUV formats */
         I420 = 200,
@@ -405,12 +406,6 @@ namespace NetLibDirectshowCapture
             VideoFormat get();
             void set(VideoFormat value);
         }
-
-        /// <summary>
-        /// Automatically transcode to BGR24 for each frame. 
-        /// </summary>
-        property bool TranscodeToBGR24;
-
     };
 
     ref class AudioConfig;
@@ -662,16 +657,23 @@ namespace NetLibDirectshowCapture
 
     class ImageTranscoder
     {
+    private:
+
+        static int XrgbToBgr24(void* nativeSrc, int nativeLength, array<Byte>^ managedDst, int width, int height);
+
     public:
         /// <summary>
-        /// Transcode native XRGB array to managed BGR24 array, return the number of bytes written to managed.
+        /// Transcode native arrya to managed BGR24 array, return the number of bytes written to managed.
+        /// Currently only XRGB.
         /// </summary>
-        /// <param name="nativeSrc">Pointer to native XRGB array</param>
-        /// <param name="nativeLength">Length of native XRGB array</param>
+        /// <param name="nativeSrc">Pointer to native array</param>
+        /// <param name="nativeLength">Length of native array</param>
         /// <param name="managedDst">Managed array to output BGR24 data</param>
         /// <param name="width">Image width</param>
         /// <param name="height">Image height</param>
+        /// <param name="format">Frame format</param>
         /// <returns>The number of bytes written to managed array</returns>
-        static int XrgbToBgr24(void* nativeSrc, int nativeLength, array<Byte>^ managedDst, int width, int height);
+        /// <exception cref="System::NotImplementedException">When input format is not supported.</exception>
+        static int TranscodeToBgr24(void* nativeSrc, int nativeLength, array<Byte>^ managedDst, int width, int height, VideoFormat format);
     };
 }
