@@ -4,17 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NetLibDirectshowCaptureExample"
+        d:DataContext="{d:DesignData MainWindow}"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1200" Width="1920">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Name="ConnectMenu" Header="Connect">
-                <Separator />
                 <MenuItem Header="Refresh" Click="OnRefreshClick"></MenuItem>
                 <MenuItem Header="Disconnect"></MenuItem>
             </MenuItem>
-            <MenuItem Name="DialogMenu" Header="DShow Dialog"></MenuItem>
+            <MenuItem Name="DeviceMenu" Header="Device"></MenuItem>
         </Menu>
-
+        <Image Source="{Binding DisplayingBitmap}" Stretch="None"/>
     </DockPanel>
 </Window>

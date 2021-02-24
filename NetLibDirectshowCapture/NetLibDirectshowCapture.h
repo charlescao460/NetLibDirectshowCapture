@@ -299,16 +299,20 @@ namespace NetLibDirectshowCapture
     public:
         property VideoConfig^ Config;
         /// <summary>
+        /// Pointer to native array.
+        /// </summary>
+        property IntPtr Ptr;
+        /// <summary>
         /// Array of managed buffer. Note that this array is not the exact size of frame buffer.
         /// Do not reference this array after exiting event handler.
         /// </summary>
         property array<Byte>^ Array;
-        property int ArrayLength;
+        property int Length;
         property long long StartTime;
         property long long StopTime;
         property long Rotation;
 
-        VideoCapturedEventArgs(VideoConfig^ config, array<Byte>^ arr, int arrSize, long long start, long long stop, long rotation);
+        VideoCapturedEventArgs(VideoConfig^ config, IntPtr ptr, array<Byte>^ arr, int arrSize, long long start, long long stop, long rotation);
     };
 
     typedef void(__stdcall* TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
