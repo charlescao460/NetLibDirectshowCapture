@@ -99,7 +99,8 @@ namespace NetLibDirectshowCaptureExample
                 CyFlip = false,
                 FrameInterval = 166666,
                 InternalFormat = VideoFormat.XRGB,
-                Format = VideoFormat.XRGB
+                Format = VideoFormat.XRGB,
+                TranscodeToBGR24 = true // Important!
             };
             videoConfig.OnVideoCaptured += OnFrame;
             _device = new Device();
@@ -130,45 +131,14 @@ namespace NetLibDirectshowCaptureExample
 
         private void OnFrame(object sender, VideoCapturedEventArgs e)
         {
-            //Debug.Write("Frame");
-
-            int rgbLength = e.Config.Cx * e.Config.CyAbs * 3;
-            _rawBitmapArray ??= new byte[rgbLength];
-
+            _rawBitmapArray ??= new byte[e.Length];
             lock (_rawBitmapArray)
             {
-                if (_rawBitmapArray.Length < rgbLength)
+                if (_rawBitmapArray.Length < e.Length)
                 {
-                    _rawBitmapArray = new byte[rgbLength];
+                    _rawBitmapArray = new byte[e.Length];
                 }
-
-                switch (e.Config.Format)
-                {
-                    case VideoFormat.XRGB:
-
-                        int stride = 3 * e.Config.Cx;
-                        int baseIndex = 0;
-                        int copyIndex = stride - 1;
-                        var src = e.Array;
-                        // Flip y, Flip x
-                        for (int i = e.Length - 1 - 4; i >= 0; i -= 4)
-                        {
-                            // R
-                            _rawBitmapArray[baseIndex + copyIndex--] = src[i + 3];
-                            // G
-                            _rawBitmapArray[baseIndex + copyIndex--] = src[i + 2];
-                            // B
-                            _rawBitmapArray[baseIndex + copyIndex--] = src[i + 1];
-                            if (copyIndex < 0)
-                            {
-                                baseIndex += stride;
-                                copyIndex = stride - 1;
-                            }
-                        }
-                        break;
-                    default:
-                        throw new NotImplementedException($"{Enum.GetName(e.Config.Format)} is not supported.");
-                }
+                Array.Copy(e.Array, _rawBitmapArray, e.Length);
                 _dirty = true;
             }
         }
@@ -198,7 +168,6 @@ namespace NetLibDirectshowCaptureExample
                 display.WritePixels(new Int32Rect(0, 0, width, height), _rawBitmapArray, stride, 0);
                 _dirty = false;
             }
-
             DisplayingBitmap = display;
         }
 

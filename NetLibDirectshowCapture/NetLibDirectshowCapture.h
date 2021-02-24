@@ -405,6 +405,12 @@ namespace NetLibDirectshowCapture
             VideoFormat get();
             void set(VideoFormat value);
         }
+
+        /// <summary>
+        /// Automatically transcode to BGR24 for each frame. 
+        /// </summary>
+        property bool TranscodeToBGR24;
+
     };
 
     ref class AudioConfig;
@@ -431,6 +437,9 @@ namespace NetLibDirectshowCapture
 
         void native_audio_handler(const DShow::AudioConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime);
+
+    internal:
+        Device^ BindedDevice;
 
     public:
         AudioConfig();
@@ -649,5 +658,20 @@ namespace NetLibDirectshowCapture
         {
             void set(LogCallBackDelegate^ value);
         };
+    };
+
+    class ImageTranscoder
+    {
+    public:
+        /// <summary>
+        /// Transcode native XRGB array to managed BGR24 array, return the number of bytes written to managed.
+        /// </summary>
+        /// <param name="nativeSrc">Pointer to native XRGB array</param>
+        /// <param name="nativeLength">Length of native XRGB array</param>
+        /// <param name="managedDst">Managed array to output BGR24 data</param>
+        /// <param name="width">Image width</param>
+        /// <param name="height">Image height</param>
+        /// <returns>The number of bytes written to managed array</returns>
+        static int XrgbToBgr24(void* nativeSrc, int nativeLength, array<Byte>^ managedDst, int width, int height);
     };
 }

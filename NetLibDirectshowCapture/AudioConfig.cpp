@@ -22,9 +22,15 @@ namespace NetLibDirectshowCapture
     void NetLibDirectshowCapture::AudioConfig::native_audio_handler(const DShow::AudioConfig& config, unsigned char* data, size_t size,
         long long startTime, long long stopTime)
     {
-        array<Byte>^ copy = gcnew array<Byte>(static_cast<int>(size));
-        System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), copy, 0, static_cast<int>(size));
-        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, copy, startTime, stopTime);
+        try
+        {
+            System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), BindedDevice->AudioManagedBuffer, 0, static_cast<int>(size));
+        }
+        catch (System::ArgumentOutOfRangeException^ e)
+        {
+            throw gcnew System::ArgumentOutOfRangeException("Managed buffer is too small. Consider increase it when constructing device.", e);
+        }
+        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, BindedDevice->AudioManagedBuffer, startTime, stopTime);
         OnAudioCaptured(this, args);
     }
 
