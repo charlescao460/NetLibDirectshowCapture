@@ -62,7 +62,7 @@ namespace NetLibDirectshowCaptureExample
             _videoDevices = Device.EnumVideoDevices();
             _videoDevices.ForEach(device =>
             {
-                device.Capabilities = device.Capabilities.Where(c => c.Format == VideoFormat.ARGB || c.Format == VideoFormat.XRGB).ToList();
+                device.Capabilities = device.Capabilities.Where(c => c.Format == VideoFormat.YUY2 || c.Format == VideoFormat.XRGB).ToList();
             });
         }
 
@@ -79,7 +79,7 @@ namespace NetLibDirectshowCaptureExample
                 };
                 toAdd.Checked += (s, e) =>
                 {
-                    OnDialogMenuItemClick(toAdd, e, d);
+                    OnDeviceMenuItemClick(toAdd, e, d);
                 };
                 DeviceMenu.Items.Insert(0, toAdd);
             });
@@ -87,7 +87,7 @@ namespace NetLibDirectshowCaptureExample
         }
 
 
-        private void OnDialogMenuItemClick(object sender, RoutedEventArgs e, VideoDevice device)
+        private void OnDeviceMenuItemClick(object sender, RoutedEventArgs e, VideoDevice device)
         {
             VideoConfig videoConfig = new VideoConfig()
             {
@@ -100,7 +100,6 @@ namespace NetLibDirectshowCaptureExample
                 FrameInterval = 166666,
                 InternalFormat = VideoFormat.XRGB,
                 Format = VideoFormat.RGB24,
-                //TranscodeToBGR24 = true // Important!
             };
             videoConfig.OnVideoCaptured += OnFrame;
             _device = new Device();
@@ -118,7 +117,9 @@ namespace NetLibDirectshowCaptureExample
 
             _currentHeight = videoConfig.CyAbs;
             _currentWidth = videoConfig.Cx;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
             _device.Start();
+            DeviceMenu.IsEnabled = false;
             CompositionTarget.Rendering += UpdateBitmapFromRawArray;
         }
 
