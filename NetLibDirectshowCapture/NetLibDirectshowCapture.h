@@ -62,7 +62,7 @@ namespace NetLibDirectshowCapture
         MPGA, /* MPEG 1 */
     };
 
-    enum class AudioMode
+    public enum class AudioMode
     {
         Capture,
         DirectSound,
@@ -414,11 +414,20 @@ namespace NetLibDirectshowCapture
     {
     public:
         property AudioConfig^ Config;
-        property array<Byte>^ Data;
+        /// <summary>
+        /// Pointer to native array.
+        /// </summary>
+        property IntPtr Ptr;
+        /// <summary>
+        /// Array of managed buffer. Note that this array is not the exact size of frame buffer.
+        /// Do not reference this array after exiting event handler.
+        /// </summary>
+        property array<Byte>^ Array;
+        property int Length;
         property long long StartTime;
         property long long StopTime;
 
-        AudioCapturedEventArgs(AudioConfig^ config, array<Byte>^ data, long long start, long long stop);
+        AudioCapturedEventArgs(AudioConfig^ config, IntPtr ptr, array<Byte>^ data, long long start, long long stop);
     };
 
     typedef void(__stdcall* TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
