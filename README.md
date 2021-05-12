@@ -2,6 +2,14 @@
 A .NET Wrapper of [libdshowcapture](https://github.com/obsproject/libdshowcapture) using .NET 5.0 C++/CLI 
 
 This is a direct wrapper, so almost all behaviors should be consistent with [libdshowcapture](https://github.com/obsproject/libdshowcapture).
+
+# Git Submodules
+Since this repo contains [libdshowcapture](https://github.com/obsproject/libdshowcapture) as its submodule, please use `--recurse-submodules` flag when cloning.
+
+```bash
+git clone --recurse-submodules git@github.com:charlescao460/NetLibDirectshowCapture.git
+``` 
+
 # Usage Example
 ```C#
 // List all capture devices
