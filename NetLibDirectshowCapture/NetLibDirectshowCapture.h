@@ -645,6 +645,7 @@ namespace NetLibDirectshowCapture
         Debug,
     };
 
+	[System::Runtime::InteropServices::UnmanagedFunctionPointerAttribute(System::Runtime::InteropServices::CallingConvention::Cdecl)]
     delegate void DSNativeLoggerCallBackDelegate(DShow::LogType type, const wchar_t* msg, void* param);
     public delegate void LogCallBackDelegate(LogType type, System::String^ msg);
 
