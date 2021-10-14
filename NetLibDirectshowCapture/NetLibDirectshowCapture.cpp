@@ -9,7 +9,7 @@ namespace NetLibDirectshowCapture
     {
     }
 
-    Device::Device() :Device::Device(false, 100'000'000, 10'000'000)
+    Device::Device() :Device::Device(false, 100000000, 10000000)
     {}
 
     bool Device::Valid()
@@ -66,7 +66,12 @@ namespace NetLibDirectshowCapture
         {
             throw gcnew System::InvalidOperationException("Cannot change config when capture is running.");
         }
+		if (value->BindedDevice != nullptr && value->BindedDevice != this)
+		{
+			throw gcnew System::InvalidOperationException("Config has been already binded to another device.");
+		}
         _audioConfiguration = value;
+		_audioConfiguration->BindedDevice = this;
         if (!_native->SetAudioConfig(_audioConfiguration->GetInstance()))
         {
             throw gcnew System::InvalidOperationException("Cannot set audioConfig.");

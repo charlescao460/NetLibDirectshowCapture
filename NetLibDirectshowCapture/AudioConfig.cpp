@@ -3,10 +3,17 @@
 
 namespace NetLibDirectshowCapture
 {
-    NetLibDirectshowCapture::AudioCapturedEventArgs::AudioCapturedEventArgs(AudioConfig^ config, IntPtr ptr, array<Byte>^ data, long long start, long long stop)
+    NetLibDirectshowCapture::AudioCapturedEventArgs::AudioCapturedEventArgs(AudioConfig^ config,
+        IntPtr ptr,
+        array<Byte>^ data,
+        int arrSize,
+        long long start,
+        long long stop)
     {
         Config = config;
+        Ptr = ptr;
         Array = data;
+        Length = arrSize;
         StartTime = start;
         StopTime = stop;
     }
@@ -30,7 +37,7 @@ namespace NetLibDirectshowCapture
         {
             throw gcnew System::ArgumentOutOfRangeException("Managed buffer is too small. Consider increase it when constructing device.", e);
         }
-        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, BindedDevice->AudioManagedBuffer, startTime, stopTime);
+        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, BindedDevice->AudioManagedBuffer, size, startTime, stopTime);
         OnAudioCaptured(this, args);
     }
 

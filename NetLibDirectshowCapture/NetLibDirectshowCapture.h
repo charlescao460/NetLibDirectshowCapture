@@ -427,7 +427,7 @@ namespace NetLibDirectshowCapture
         property long long StartTime;
         property long long StopTime;
 
-        AudioCapturedEventArgs(AudioConfig^ config, IntPtr ptr, array<Byte>^ data, long long start, long long stop);
+        AudioCapturedEventArgs(AudioConfig^ config, IntPtr ptr, array<Byte>^ data, int arrSize, long long start, long long stop);
     };
 
     typedef void(__stdcall* TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
@@ -645,7 +645,7 @@ namespace NetLibDirectshowCapture
         Debug,
     };
 
-	[System::Runtime::InteropServices::UnmanagedFunctionPointerAttribute(System::Runtime::InteropServices::CallingConvention::Cdecl)]
+    [System::Runtime::InteropServices::UnmanagedFunctionPointerAttribute(System::Runtime::InteropServices::CallingConvention::Cdecl)]
     delegate void DSNativeLoggerCallBackDelegate(DShow::LogType type, const wchar_t* msg, void* param);
     public delegate void LogCallBackDelegate(LogType type, System::String^ msg);
 
