@@ -1,5 +1,5 @@
 # NetLibDirectshowCapture
-A .NET Wrapper of [libdshowcapture](https://github.com/obsproject/libdshowcapture) using .NET 5.0 C++/CLI 
+A .NET Wrapper of [libdshowcapture](https://github.com/obsproject/libdshowcapture) using .NET 8.0 C++/CLI 
 
 This is a direct wrapper, so almost all behaviors should be consistent with [libdshowcapture](https://github.com/obsproject/libdshowcapture).
 
