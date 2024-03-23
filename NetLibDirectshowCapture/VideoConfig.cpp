@@ -26,6 +26,10 @@ namespace NetLibDirectshowCapture
         IntPtr managedPointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(_videoProc);
         TypePointerNativeVideoProc nativePointer = static_cast<TypePointerNativeVideoProc>(managedPointer.ToPointer());
         _native->callback = nativePointer;
+        _reactivateProc = gcnew ReactivateProc(this, &NetLibDirectshowCapture::VideoConfig::native_reactivate_handler);
+        IntPtr managedReactivatePointer = Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(_reactivateProc);
+        TypePointerNativeReactivateProc nativeReactivePointer = static_cast<TypePointerNativeReactivateProc>(managedPointer.ToPointer());
+        _native->reactivateCallback = nativeReactivePointer;
     }
 
     void NetLibDirectshowCapture::VideoConfig::native_video_handler(const DShow::VideoConfig& config,
@@ -45,6 +49,11 @@ namespace NetLibDirectshowCapture
             gcnew VideoCapturedEventArgs(this, IntPtr(data), BindedDevice->VideoManagedBuffer, iSize, startTime, stopTime, rotation);
         //__debugbreak();
         OnVideoCaptured(this, args);
+    }
+
+    void NetLibDirectshowCapture::VideoConfig::native_reactivate_handler()
+    {
+        OnReactivate();
     }
 
     System::String^ VideoConfig::Name::get()

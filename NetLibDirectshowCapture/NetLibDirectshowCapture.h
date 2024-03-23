@@ -318,6 +318,8 @@ namespace NetLibDirectshowCapture
 
     typedef void(__stdcall* TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
 
+    typedef void(__stdcall* TypePointerNativeReactivateProc)();
+
     public ref class VideoConfig : public IConfig, public ManagedObjectBase<DShow::VideoConfig>
     {
     private:
@@ -328,6 +330,9 @@ namespace NetLibDirectshowCapture
         void native_video_handler(const DShow::VideoConfig& config, unsigned char* data,
             size_t size, long long startTime, long long stopTime,
             long rotation);
+        delegate void ReactivateProc();
+        ReactivateProc^ _reactivateProc;
+        void native_reactivate_handler();
     internal:
         Device^ BindedDevice;
     public:
@@ -336,11 +341,18 @@ namespace NetLibDirectshowCapture
 
         delegate void VideoCapturedEventHandler(System::Object^ source, VideoCapturedEventArgs^ args);
 
+        delegate void ReactiveEventHandler();
+
         /// <summary>
         /// Raised when native has received video bytes. It will send a copy to managed code.
         /// This event must be assigned before calling Start().
         /// </summary>
         event VideoCapturedEventHandler^ OnVideoCaptured;
+
+        /// <summary>
+        /// Raised when the underlying device reactivated. This happens when switching on/off HDR.
+        /// </summary>
+        event ReactiveEventHandler^ OnReactivate;
 
         property System::String^ Name
         {
