@@ -17,24 +17,27 @@ var videoDevices = NetLibDirectshowCapture.Device.EnumVideoDevices();
 var videoDevice = videoDevices[0];
 // Check device's capabilities
 var cap = videoDevice.Capabilities
-          .First(c => c.Format == VideoFormat.YUY2 && c.MaxCx == 1920 && c.MaxCy == 1080);
+    .First(c => c.Format == VideoFormat.YUY2 && c.MaxCx == 1920 && c.MaxCy == 1080);
 // Create config
 VideoConfig videoConfig = new VideoConfig()
 {
     Name = videoDevice.Name,
     Path = videoDevice.Path,
     UseDefaultConfig = false,
-    Cx = 1920,
-    CyAbs = 1080,
+    Cx = cap.MaxCx,
+    CyAbs = cap.MaxCy,
     CyFlip = false,
-    FrameInterval = 166666,
-    InternalFormat = VideoFormat.YUY2,
-    Format = VideoFormat.XRGB,
+    FrameInterval = cap.MinInterval,
+    InternalFormat = cap.Format,
+    Format = VideoFormat.XRGB
 };
+byte[] managedArray = null;
 // Create frame event handler
 videoConfig.OnVideoCaptured += (o, e) =>
 {
-    // Process frames using e.Array
+    managedArray ??= new byte[e.Length];
+    System.Runtime.InteropServices.Marshal.Copy(e.Ptr, managedArray, 0, e.Length);
+    // Process frames using managedArray...
 };
 // Run!
 var device = new Device();

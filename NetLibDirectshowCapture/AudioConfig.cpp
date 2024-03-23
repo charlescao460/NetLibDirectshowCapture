@@ -5,14 +5,12 @@ namespace NetLibDirectshowCapture
 {
     NetLibDirectshowCapture::AudioCapturedEventArgs::AudioCapturedEventArgs(AudioConfig^ config,
         IntPtr ptr,
-        array<Byte>^ data,
         int arrSize,
         long long start,
         long long stop)
     {
         Config = config;
         Ptr = ptr;
-        Array = data;
         Length = arrSize;
         StartTime = start;
         StopTime = stop;
@@ -29,15 +27,14 @@ namespace NetLibDirectshowCapture
     void NetLibDirectshowCapture::AudioConfig::native_audio_handler(const DShow::AudioConfig& config, unsigned char* data, size_t size,
         long long startTime, long long stopTime)
     {
-        try
-        {
-            System::Runtime::InteropServices::Marshal::Copy(IntPtr(data), BindedDevice->AudioManagedBuffer, 0, static_cast<int>(size));
-        }
-        catch (System::ArgumentOutOfRangeException^ e)
-        {
-            throw gcnew System::ArgumentOutOfRangeException("Managed buffer is too small. Consider increase it when constructing device.", e);
-        }
-        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, BindedDevice->AudioManagedBuffer, size, startTime, stopTime);
+        // Update native config
+        _native->useVideoDevice = config.useVideoDevice;
+        _native->useSeparateAudioFilter = config.useSeparateAudioFilter;
+        _native->sampleRate = config.sampleRate;
+        _native->channels = config.channels;
+        _native->format = config.format;
+        _native->mode = config.mode;
+        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, size, startTime, stopTime);
         OnAudioCaptured(this, args);
     }
 

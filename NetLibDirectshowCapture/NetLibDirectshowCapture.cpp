@@ -3,13 +3,13 @@
 
 namespace NetLibDirectshowCapture
 {
-    Device::Device(bool initGraph, int videoBufferSize, int audioBufferSize) :
+    Device::Device(bool initGraph) :
         ManagedObjectBase<DShow::Device>(initGraph ? DShow::InitGraph::True : DShow::InitGraph::False),
-        _isRunning(false), _VideoManagedBufferSize(videoBufferSize), _AudioManagedBufferSize(audioBufferSize)
+        _isRunning(false)
     {
     }
 
-    Device::Device() :Device::Device(false, 100000000, 10000000)
+    Device::Device() :Device::Device(false)
     {}
 
     bool Device::Valid()
@@ -43,12 +43,7 @@ namespace NetLibDirectshowCapture
         {
             throw gcnew System::InvalidOperationException("Cannot change config when capture is running.");
         }
-        if (value->BindedDevice != nullptr && value->BindedDevice != this)
-        {
-            throw gcnew System::InvalidOperationException("Config has been already binded to another device.");
-        }
         _videoConfiguration = value;
-        _videoConfiguration->BindedDevice = this;
         if (!_native->SetVideoConfig(_videoConfiguration->GetInstance()))
         {
             throw gcnew System::InvalidOperationException("Cannot set videoConfig.");
@@ -93,8 +88,6 @@ namespace NetLibDirectshowCapture
         {
             throw gcnew System::InvalidOperationException("Cannot start without any configurations set.");
         }
-        AudioManagedBuffer = gcnew array<Byte>(_AudioManagedBufferSize);
-        VideoManagedBuffer = gcnew array<Byte>(_VideoManagedBufferSize);
         const DShow::Result result = _native->Start();
         switch (result)
         {

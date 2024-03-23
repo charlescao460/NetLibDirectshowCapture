@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -139,7 +140,7 @@ namespace NetLibDirectshowCaptureExample
                 {
                     _rawBitmapArray = new byte[e.Length];
                 }
-                Array.Copy(e.Array, _rawBitmapArray, e.Length);
+                Marshal.Copy(e.Ptr, _rawBitmapArray, 0, e.Length);
                 _dirty = true;
             }
         }

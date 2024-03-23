@@ -303,17 +303,12 @@ namespace NetLibDirectshowCapture
         /// Pointer to native array.
         /// </summary>
         property IntPtr Ptr;
-        /// <summary>
-        /// Array of managed buffer. Note that this array is not the exact size of frame buffer.
-        /// Do not reference this array after exiting event handler.
-        /// </summary>
-        property array<Byte>^ Array;
         property int Length;
         property long long StartTime;
         property long long StopTime;
         property long Rotation;
 
-        VideoCapturedEventArgs(VideoConfig^ config, IntPtr ptr, array<Byte>^ arr, int arrSize, long long start, long long stop, long rotation);
+        VideoCapturedEventArgs(VideoConfig^ config, IntPtr ptr, int arrSize, long long start, long long stop, long rotation);
     };
 
     typedef void(__stdcall* TypePointerNativeVideoProc)(const DShow::VideoConfig&, unsigned char*, size_t, long long, long long, long);
@@ -333,8 +328,7 @@ namespace NetLibDirectshowCapture
         delegate void ReactivateProc();
         ReactivateProc^ _reactivateProc;
         void native_reactivate_handler();
-    internal:
-        Device^ BindedDevice;
+
     public:
 
         VideoConfig();
@@ -430,16 +424,11 @@ namespace NetLibDirectshowCapture
         /// Pointer to native array.
         /// </summary>
         property IntPtr Ptr;
-        /// <summary>
-        /// Array of managed buffer. Note that this array is not the exact size of frame buffer.
-        /// Do not reference this array after exiting event handler.
-        /// </summary>
-        property array<Byte>^ Array;
         property int Length;
         property long long StartTime;
         property long long StopTime;
 
-        AudioCapturedEventArgs(AudioConfig^ config, IntPtr ptr, array<Byte>^ data, int arrSize, long long start, long long stop);
+        AudioCapturedEventArgs(AudioConfig^ config, IntPtr ptr, int arrSize, long long start, long long stop);
     };
 
     typedef void(__stdcall* TypePointerNativeAudioProc)(const DShow::AudioConfig&, unsigned char*, size_t, long long, long long);
@@ -551,11 +540,8 @@ namespace NetLibDirectshowCapture
         int _AudioManagedBufferSize;
     protected:
         bool _isRunning;
-    internal:
-        array<Byte>^ VideoManagedBuffer;
-        array<Byte>^ AudioManagedBuffer;
     public:
-        Device(bool initGraph, int videoBufferSize, int audioBufferSize);
+        Device(bool initGraph);
 
         /// <summary>
         /// Default constructor with initGraph=false, and 100MiB video buffer, 10MiB audio buffer
