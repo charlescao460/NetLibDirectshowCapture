@@ -43,7 +43,12 @@ namespace NetLibDirectshowCapture
         {
             throw gcnew System::InvalidOperationException("Cannot change config when capture is running.");
         }
+        if (value->BindedDevice != nullptr && value->BindedDevice != this)
+        {
+            throw gcnew System::InvalidOperationException("Config has been already binded to another device.");
+        }
         _videoConfiguration = value;
+        _videoConfiguration->BindedDevice = this;
         if (!_native->SetVideoConfig(_videoConfiguration->GetInstance()))
         {
             throw gcnew System::InvalidOperationException("Cannot set videoConfig.");

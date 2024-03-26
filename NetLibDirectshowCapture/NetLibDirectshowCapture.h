@@ -329,6 +329,9 @@ namespace NetLibDirectshowCapture
         ReactivateProc^ _reactivateProc;
         void native_reactivate_handler();
 
+    internal:
+        Device^ BindedDevice;
+
     public:
 
         VideoConfig();

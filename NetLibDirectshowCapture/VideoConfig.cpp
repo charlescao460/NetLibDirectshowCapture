@@ -43,7 +43,7 @@ namespace NetLibDirectshowCapture
         VideoCapturedEventArgs^ args =
             gcnew VideoCapturedEventArgs(this, IntPtr(data), static_cast<int>(size), startTime, stopTime, rotation);
         //__debugbreak();
-        OnVideoCaptured(this, args);
+        OnVideoCaptured(BindedDevice, args);
     }
 
     void NetLibDirectshowCapture::VideoConfig::native_reactivate_handler()

@@ -35,7 +35,7 @@ namespace NetLibDirectshowCapture
         _native->format = config.format;
         _native->mode = config.mode;
         AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, size, startTime, stopTime);
-        OnAudioCaptured(this, args);
+        OnAudioCaptured(BindedDevice, args);
     }
 
     System::String^ AudioConfig::Name::get()
