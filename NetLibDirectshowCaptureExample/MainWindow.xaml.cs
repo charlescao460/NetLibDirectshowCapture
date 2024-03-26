@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using NAudio.Wave;
 using NetLibDirectshowCapture;
 
 namespace NetLibDirectshowCaptureExample
@@ -29,7 +30,9 @@ namespace NetLibDirectshowCaptureExample
     {
         private List<VideoDevice> _videoDevices;
         private Device _device;
-
+        private WaveOutEvent _waveOut;
+        private BufferedWaveProvider _waveBuffer;
+        private byte[] _rawWaveArray;
         private byte[] _rawBitmapArray;
         private bool _dirty = false;
         private int _currentHeight;
@@ -48,6 +51,8 @@ namespace NetLibDirectshowCaptureExample
 
         public MainWindow()
         {
+            _waveOut = new WaveOutEvent();
+            _waveBuffer = new BufferedWaveProvider(new WaveFormat(48000, 16, 2));
             _displayingBitmap = new WriteableBitmap(1920, 1080, 96, 96, PixelFormats.Bgr24, null);
             InitializeComponent();
             DSLogger.CallBack = (t, s) =>
@@ -75,10 +80,9 @@ namespace NetLibDirectshowCaptureExample
             {
                 MenuItem toAdd = new MenuItem()
                 {
-                    Header = d.Name,
-                    IsCheckable = true
+                    Header = d.Name
                 };
-                toAdd.Checked += (s, e) =>
+                toAdd.Click += (s, e) =>
                 {
                     OnDeviceMenuItemClick(toAdd, e, d);
                 };
@@ -99,10 +103,40 @@ namespace NetLibDirectshowCaptureExample
                 CyAbs = 1080,
                 CyFlip = false,
                 FrameInterval = 166666,
-                InternalFormat = VideoFormat.XRGB,
+                InternalFormat = VideoFormat.YUY2,
                 Format = VideoFormat.RGB24,
             };
+            var audioDevices = Device.EnumAudioDevices();
+            var audioDevice = audioDevices.Find(d => d.Name.Contains(videoConfig.Name, StringComparison.InvariantCultureIgnoreCase));
+            AudioConfig audioConfig = new AudioConfig()
+            {
+                Name = audioDevice?.Name,
+                Path = audioDevice?.Path,
+                Channels = 2,
+                SampleRate = 48000,
+                Format = AudioFormat.Wave16bit,
+                UseVideoDevice = false,
+                UseSeparateAudioFilter = false,
+                UseDefaultConfig = false
+            };
+
+            // Special handling for Corsair Elgato devices
+            if (videoConfig.Name.Contains("Game Capture", StringComparison.InvariantCultureIgnoreCase) ||
+                videoConfig.Name.Contains("Elgato", StringComparison.InvariantCultureIgnoreCase))
+            {
+                audioConfig.UseSeparateAudioFilter = true;
+            }
+
             videoConfig.OnVideoCaptured += OnFrame;
+            try
+            {
+                audioConfig.OnAudioCaptured += OnAudioFrame;
+            }
+            catch (InvalidOperationException ignored)
+            {
+                // Ignore, might because we don't have audio device at all.
+            }
+
             _device = new Device();
             if (!_device.ResetGraph())
             {
@@ -110,6 +144,7 @@ namespace NetLibDirectshowCaptureExample
             }
 
             _device.VideoConfiguration = videoConfig;
+            _device.AudioConfiguration = audioConfig;
 
             if (!_device.ConnectFilters())
             {
@@ -131,6 +166,22 @@ namespace NetLibDirectshowCaptureExample
             ListVideoDevices();
         }
 
+        private void OnAudioFrame(object sender, AudioCapturedEventArgs e)
+        {
+            _rawWaveArray ??= new byte[e.Length];
+            if (_rawWaveArray.Length < e.Length)
+            {
+                _rawWaveArray = new byte[e.Length];
+            }
+            Marshal.Copy(e.Ptr, _rawWaveArray, 0, e.Length);
+            _waveBuffer.AddSamples(_rawWaveArray, 0, e.Length);
+            if (_waveOut.PlaybackState != PlaybackState.Playing)
+            {
+                _waveOut.Init(_waveBuffer);
+                _waveOut.Play();
+            }
+        }
+
         private void OnFrame(object sender, VideoCapturedEventArgs e)
         {
             _rawBitmapArray ??= new byte[e.Length];
@@ -143,6 +194,14 @@ namespace NetLibDirectshowCaptureExample
                 Marshal.Copy(e.Ptr, _rawBitmapArray, 0, e.Length);
                 _dirty = true;
             }
+        }
+
+        private void OnDisconnectClick(object sender, RoutedEventArgs e)
+        {
+            CompositionTarget.Rendering -= UpdateBitmapFromRawArray;
+            _device.Stop();
+            _waveOut.Stop();
+            DeviceMenu.IsEnabled = true;
         }
 
         private void UpdateBitmapFromRawArray(object s, EventArgs e)
