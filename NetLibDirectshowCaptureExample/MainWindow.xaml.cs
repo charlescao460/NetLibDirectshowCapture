@@ -132,7 +132,7 @@ namespace NetLibDirectshowCaptureExample
             {
                 audioConfig.OnAudioCaptured += OnAudioFrame;
             }
-            catch (InvalidOperationException ignored)
+            catch (InvalidOperationException)
             {
                 // Ignore, might because we don't have audio device at all.
             }

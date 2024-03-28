@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <cstdint>
 #include "NetLibDirectshowCapture.h"
 
 namespace NetLibDirectshowCapture
@@ -34,7 +35,7 @@ namespace NetLibDirectshowCapture
         _native->channels = config.channels;
         _native->format = config.format;
         _native->mode = config.mode;
-        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, size, startTime, stopTime);
+        AudioCapturedEventArgs^ args = gcnew AudioCapturedEventArgs(this, (IntPtr)data, static_cast<int32_t>(size), startTime, stopTime);
         OnAudioCaptured(BindedDevice, args);
     }
 
