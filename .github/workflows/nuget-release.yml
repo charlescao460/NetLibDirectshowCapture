@@ -35,5 +35,5 @@ jobs:
       run: msbuild /m /t:NetLibDirectshowCapture:pack /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
 
     - name: Publish
-      working-directory: ${{env.GITHUB_WORKSPACE}}/NetLibDirectshowCapture/NetLibDirectshowCapture/bin/Release
+      working-directory: NetLibDirectshowCapture/NetLibDirectshowCapture/bin/Release
       run: nuget push "$(Get-ChildItem -Filter "*.nupkg")" ${{ secrets.NUGET_API_KEY }} -Source https://api.nuget.org/v3/index.json
