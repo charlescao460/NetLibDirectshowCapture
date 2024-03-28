@@ -26,7 +26,32 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <TargetFramework>net8.0</TargetFramework>
     <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
+    <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <PackageId>NetLibDirectshowCapture</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Shirui Cao</Authors>
+    <Title>.NET Wrapper of OBSproject/libdshowcapture</Title>
+    <Description>
+    A .NET wrapper of OBSproject/libdshowcapture. Capture Video/Audio/Image from cameras or capture cards. 
+    Compatible with many webcams, USB capture cards, PCI-E capture cards (all the devices that OBS Studio supports).
+    Written in C++/CLI (a.k.a. C++ Interop). It has lower latency compared to other libarries using explicit PInvoke. 
+    </Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/charlescao460/NetLibDirectshowCapture</PackageProjectUrl>
+    <PackageTags>NetLibDirectshowCapture;DirectShow;OBSproject;capture-video;camera;capture-card</PackageTags>
+    <RepositoryUrl>git@github.com:charlescao460/NetLibDirectshowCapture.git</RepositoryUrl>
   </PropertyGroup>
+  <ItemGroup>
+   <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\"/>
+   <BuiltProjectOutputGroupOutput Include="$(SolutionDir)build\libdshowcapture\bin\$(Platform)\$(Configuration)\dshowcapture.dll" />
+   <BuiltProjectOutputGroupOutput Include="$(SolutionDir)build\libdshowcapture\bin\$(Platform)\$(Configuration)\Ijwhost.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.9.1" PrivateAssets="all" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
