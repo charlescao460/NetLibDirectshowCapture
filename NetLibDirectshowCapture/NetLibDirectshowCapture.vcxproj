@@ -30,7 +30,7 @@
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <PackageId>NetLibDirectshowCapture</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Authors>Shirui Cao</Authors>
     <Title>.NET Wrapper of OBSproject/libdshowcapture</Title>
     <Description>
@@ -219,7 +219,7 @@
     <Image Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libdshowcapture\vs\2013\dshowcapture\dshowcapture.vcxproj">
+    <ProjectReference Include="..\libdshowcapture\vs\2013\dshowcapture\dshowcapture.vcxproj" PrivateAssets="all">
       <Project>{fff52519-38bb-4155-851d-4209ec67aca7}</Project>
     </ProjectReference>
   </ItemGroup>
