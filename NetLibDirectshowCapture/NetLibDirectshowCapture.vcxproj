@@ -23,7 +23,6 @@
     <ProjectGuid>{F54900FF-3C66-4E62-BD12-FD2D55E2C9A7}</ProjectGuid>
     <Keyword>NetCoreCProj</Keyword>
     <RootNamespace>NetLibDirectshowCapture</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <TargetFramework>net8.0</TargetFramework>
     <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
     <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>
@@ -43,11 +42,12 @@
     <PackageProjectUrl>https://github.com/charlescao460/NetLibDirectshowCapture</PackageProjectUrl>
     <PackageTags>NetLibDirectshowCapture;DirectShow;OBSproject;capture-video;camera;capture-card</PackageTags>
     <RepositoryUrl>git@github.com:charlescao460/NetLibDirectshowCapture.git</RepositoryUrl>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
-   <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\"/>
-   <BuiltProjectOutputGroupOutput Include="$(SolutionDir)build\libdshowcapture\bin\$(Platform)\$(Configuration)\dshowcapture.dll" />
-   <BuiltProjectOutputGroupOutput Include="$(SolutionDir)build\libdshowcapture\bin\$(Platform)\$(Configuration)\Ijwhost.dll" />
+    <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\" />
+    <BuiltProjectOutputGroupOutput Include="$(SolutionDir)build\libdshowcapture\bin\$(Platform)\$(Configuration)\dshowcapture.dll" />
+    <BuiltProjectOutputGroupOutput Include="$(SolutionDir)build\libdshowcapture\bin\$(Platform)\$(Configuration)\Ijwhost.dll" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.9.1" PrivateAssets="all" />
