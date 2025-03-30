@@ -532,6 +532,16 @@ namespace NetLibDirectshowCapture
             AudioMode get();
             void set(AudioMode value);
         }
+
+        /// <summary>
+        /// Desired audio buffer size
+        /// </summary>
+        property int Buffer
+        {
+            int get();
+            void set(int value);
+        }
+
     };
 
     public ref class Device : public ManagedObjectBase<DShow::Device>

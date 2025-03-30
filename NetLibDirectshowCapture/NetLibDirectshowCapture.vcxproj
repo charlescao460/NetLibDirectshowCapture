@@ -24,12 +24,12 @@
     <Keyword>NetCoreCProj</Keyword>
     <RootNamespace>NetLibDirectshowCapture</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
-    <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.20348.0</WindowsTargetPlatformMinVersion>
     <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <PackageId>NetLibDirectshowCapture</PackageId>
-    <PackageVersion>1.0.1</PackageVersion>
+    <PackageVersion>1.0.2</PackageVersion>
     <Authors>Shirui Cao</Authors>
     <Title>.NET Wrapper of OBSproject/libdshowcapture</Title>
     <Description>

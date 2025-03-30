@@ -53,6 +53,7 @@ namespace NetLibDirectshowCaptureExample
         {
             _waveOut = new WaveOutEvent();
             _waveBuffer = new BufferedWaveProvider(new WaveFormat(48000, 16, 2));
+            _waveBuffer.BufferDuration = TimeSpan.FromMilliseconds(320);
             _displayingBitmap = new WriteableBitmap(1920, 1080, 96, 96, PixelFormats.Bgr24, null);
             InitializeComponent();
             DSLogger.CallBack = (t, s) =>
@@ -106,12 +107,10 @@ namespace NetLibDirectshowCaptureExample
                 InternalFormat = VideoFormat.YUY2,
                 Format = VideoFormat.RGB24,
             };
-            var audioDevices = Device.EnumAudioDevices();
-            var audioDevice = audioDevices.Find(d => d.Name.Contains(videoConfig.Name, StringComparison.InvariantCultureIgnoreCase));
+
+            // TODO: Use WMI to find audio device through device tree
             AudioConfig audioConfig = new AudioConfig()
             {
-                Name = audioDevice?.Name,
-                Path = audioDevice?.Path,
                 Channels = 2,
                 SampleRate = 48000,
                 Format = AudioFormat.Wave16bit,
@@ -119,6 +118,15 @@ namespace NetLibDirectshowCaptureExample
                 UseSeparateAudioFilter = false,
                 UseDefaultConfig = false
             };
+
+            var audioDevices = Device.EnumAudioDevices();
+            var audioDevice = audioDevices.Find(d => d.Name.Contains(videoConfig.Name, StringComparison.InvariantCultureIgnoreCase))
+                              ?? FindAttachedAudioWithSpecialHandling(device, audioDevices);
+            if (audioDevice != null)
+            {
+                audioConfig.Name = audioDevice.Name;
+                audioConfig.Path = audioDevice.Path;
+            }
 
             // Special handling for Corsair Elgato devices
             if (videoConfig.Name.Contains("Game Capture", StringComparison.InvariantCultureIgnoreCase) ||
@@ -144,7 +152,11 @@ namespace NetLibDirectshowCaptureExample
             }
 
             _device.VideoConfiguration = videoConfig;
-            _device.AudioConfiguration = audioConfig;
+
+            if (audioConfig.Name != null || audioConfig.Path != null)
+            {
+                _device.AudioConfiguration = audioConfig;
+            }
 
             if (!_device.ConnectFilters())
             {
@@ -157,6 +169,23 @@ namespace NetLibDirectshowCaptureExample
             _device.Start();
             DeviceMenu.IsEnabled = false;
             CompositionTarget.Rendering += UpdateBitmapFromRawArray;
+        }
+
+        private static AudioDevice FindAttachedAudioWithSpecialHandling(VideoDevice videoDevice, List<AudioDevice> audioDevices)
+        {
+            // ACASIS PCI-E Capture Cards, E.g., "HDPro 1" video is paired with "HDPro Audio 1" audio
+            if (videoDevice.Name.Contains("HDPro", StringComparison.InvariantCultureIgnoreCase))
+            {
+                string audioName = videoDevice.Name.Replace("HDPro", "HDPro Audio");
+                return audioDevices.Find(a => a.Name.Contains(audioName, StringComparison.InvariantCultureIgnoreCase));
+            }
+            // ACASIS Thunderbolt Capture Cards, E.g., "UHD Video 1" video is pared with "UHD Audio 1"
+            if (videoDevice.Name.Contains("UHD Video", StringComparison.InvariantCultureIgnoreCase))
+            {
+                string audioName = videoDevice.Name.Replace("UHD Video", "UHD Audio");
+                return audioDevices.Find(a => a.Name.Contains(audioName, StringComparison.InvariantCultureIgnoreCase));
+            }
+            return null;
         }
 
 
@@ -174,7 +203,15 @@ namespace NetLibDirectshowCaptureExample
                 _rawWaveArray = new byte[e.Length];
             }
             Marshal.Copy(e.Ptr, _rawWaveArray, 0, e.Length);
-            _waveBuffer.AddSamples(_rawWaveArray, 0, e.Length);
+            try
+            {
+                _waveBuffer.AddSamples(_rawWaveArray, 0, e.Length);
+            }
+            catch (InvalidOperationException) // buffer full
+            {
+                _waveBuffer.ClearBuffer();
+            }
+
             if (_waveOut.PlaybackState != PlaybackState.Playing)
             {
                 _waveOut.Init(_waveBuffer);

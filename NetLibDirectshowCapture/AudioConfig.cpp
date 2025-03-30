@@ -128,4 +128,15 @@ namespace NetLibDirectshowCapture
     {
         _native->mode = static_cast<DShow::AudioMode>(value);
     }
+
+    int NetLibDirectshowCapture::AudioConfig::Buffer::get()
+    {
+        return _native->buffer;
+    }
+
+    void AudioConfig::Buffer::set(int value)
+    {
+        _native->buffer = value;
+    }
+
 }
